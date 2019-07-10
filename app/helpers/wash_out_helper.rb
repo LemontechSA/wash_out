@@ -2,14 +2,22 @@ module WashOutHelper
 
   def wsdl_data_options(param)
     case controller.soap_config.wsdl_style
-    when 'rpc'
+    when :rpc
       if param.map.present? || !param.value.nil?
         { :"xsi:type" => param.namespaced_type }
       else
         { :"xsi:nil" => true }
       end
-    when 'document'
-      {}
+    when :document
+      if param.map && param.map.first.try(:multiplied)
+        count = param.map.first.map.count
+        {
+          :"xsi:type" => "SOAP-ENC:Array",
+          :"SOAP-ENC:arrayType" => "#{param.map.first.namespaced_type}[#{count}]"
+        }
+      else
+        { :"xsi:type" => param.namespaced_type }
+      end
     else
       {}
     end

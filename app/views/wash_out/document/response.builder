@@ -13,13 +13,8 @@ xml.tag! "SOAP-ENV:Envelope",
     end
   end
   xml.tag! "SOAP-ENV:Body" do
-    xml.tag! "ns1:#{@action_spec[:response_tag]}", { "xmlns:ns1" => "urn:TimeTracking"} do
-      first_result = result.first
-      if first_result && first_result.type == 'xml'
-        xml.<<(result.first.value)
-      else
-        wsdl_data xml, result
-      end
+    xml.tag! "ns1:#{@action_spec[:response_tag]}", { "xmlns:ns1" => "#{@namespace}"} do
+      wsdl_data xml, result
     end
   end
 end
